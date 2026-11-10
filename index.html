@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomePulse - Automated Home Payments</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+body{background:#f6f8f7;color:#0f1f1a}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 5%;background:#fff;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.logo{font-size:24px;font-weight:900}.logo span{color:#00c853}
+.btn{background:#00c853;color:#fff;padding:12px 22px;border:none;border-radius:999px;font-weight:700;cursor:pointer}
+.hero{padding:60px 5%;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center;background:linear-gradient(135deg,#0f1f1a,#0a3d24);color:#fff;border-radius:0 0 30px 30px}
+.hero h1{font-size:48px;line-height:1.05}.hero h1 em{color:#00e676;font-style:normal}
+.hero p{margin:18px 0;color:#cfe8d8}
+.card{background:#fff;color:#111;padding:22px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.card h3{margin-bottom:10px}.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}
+.pill{background:#e6f9ec;color:#008a3a;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
+section{padding:50px 5%}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.feature{background:#fff;padding:22px;border-radius:18px;border:1px solid #e8e8e8}
+.feature h3{margin:10px 0}
+input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;margin:8px 0}
+.toggle{display:flex;align-items:center;gap:10px;margin:10px 0}
+.switch{width:50px;height:26px;background:#ccc;border-radius:999px;position:relative;cursor:pointer}.switch:after{content:"";position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.2s}.switch.on{background:#00c853}.switch.on:after{left:26px}
+#toast{position:fixed;bottom:20px;right:20px;background:#111;color:#fff;padding:14px 18px;border-radius:12px;display:none}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Home<span>Pulse</span> 🏠</div>
+  <div><a href="#calc">Calculator</a> &nbsp; <a href="#dash">Dashboard</a> &nbsp; <button class="btn" onclick="scrollToId('signup')">Get Started Free</button></div>
+</header>
+
+<div class="hero">
+  <div>
+    <span class="pill">✦ AUTOMATED HOME PAYMENTS</span>
+    <h1>Pay Rent, Bills & Utilities <em>On Autopilot.</em></h1>
+    <p>HomePulse auto-pays your rent, light, water, WiFi & service charge before due date. No late fees. No wahala. Landlords get paid on time, every time.</p>
+    <button class="btn" onclick="scrollToId('calc')">Try Live Calculator →</button>
+    <p style="font-size:13px;margin-top:12px">✓ No card needed to start &nbsp; ✓ Works in Nigeria, UK & US &nbsp; ✓ Cancel anytime</p>
+  </div>
+  <div class="card" id="dash">
+    <h3>Live Dashboard Demo</h3>
+    <div class="row"><span>🏠 Rent - Lekki Apartment</span><b>₦450,000</b></div>
+    <div class="row"><span>💡 Light / PHCN</span><b>₦25,000</b></div>
+    <div class="row"><span>📶 WiFi - Starlink</span><b>₦38,000</b></div>
+    <div class="row"><span>💧 Water + Service</span><b>₦15,000</b></div>
+    <div class="row" style="border:none"><span><b>Total This Month</b></span><b id="dashTotal">₦528,000</b></div>
+    <div class="toggle"><div class="switch on" id="autoSwitch" onclick="toggleAuto()"></div><span id="autoText">Autopay: ON - Pays on 1st</span></div>
+    <button class="btn" style="width:100%" onclick="payNow()">Pay Now - Simulate Payment</button>
+    <p id="payMsg" style="margin-top:10px;font-size:13px;color:#008a3a"></p>
+  </div>
+</div>
+<section>
+  <h2 style="font-size:32px;margin-bottom:20px">Everything for your home, in one place</h2>
+  <div class="grid">
+    <div class="feature"><h3>🏠 Auto-Rent</h3><p>Set rent once. HomePulse splits it monthly, weekly or yearly and pays landlord automatically.</p></div>
+    <div class="feature"><h3>💡 Bills Split</h3><p>Sharing flat? Split light, WiFi, water with flatmates. Everyone pays their share.</p></div>
+    <div class="feature"><h3>📊 Landlord Dashboard</h3><p>Landlords see who paid, who is late, download receipts and statements.</p></div>
+    <div class="feature"><h3>🔔 Smart Reminders</h3><p>WhatsApp + SMS reminders 3 days, 1 day and 1 hour before due date.</p></div>
+  </div>
+</section>
+
+<section id="calc" style="background:#fff;border-radius:24px;margin:0 5%">
+  <h2>🧮 Rent Calculator - Try Am</h2>
+  <p>Enter your rent, see monthly breakdown instantly.</p>
+  <label>Monthly Rent (₦ / $ / £)</label><input type="number" id="rent" value="450000" oninput="calc()">
+  <label>Utilities</label><input type="number" id="util" value="78000" oninput="calc()">
+  <label>How you wan pay?</label>
+  <select id="plan" onchange="calc()"><option value="1">Monthly</option><option value="12">Yearly (Save 5%)</option><option value="0.25">Weekly</option></select>
+  <div class="card" style="box-shadow:none;border:1px solid #eee;margin-top:14px">
+    <div class="row"><span>Rent + Utilities</span><b id="out1">₦528,000</b></div>
+    <div class="row"><span>HomePulse Fee (1.5%)</span><b id="out2">₦7,920</b></div>
+    <div class="row"><span>You Pay</span><b id="out3" style="color:#00c853;font-size:20px">₦535,920</b></div>
+    <p id="saveMsg" style="font-size:13px;color:#666"></p>
+  </div>
+</section>
+
+<section id="signup" style="text-align:center">
+  <h2 style="font-size:34px">Start in 30 seconds</h2>
+  <p>Get early access. We go email you your dashboard link.</p>
+  <div style="max-width:420px;margin:20px auto" class="card">
+    <input id="name" placeholder="Your Name e.g. Tobi">
+    <input id="email" placeholder="Email">
+    <select id="type"><option>Tenant - I pay rent</option><option>Landlord - I collect rent</option><option>Agent / Property Manager</option></select>
+    <button class="btn" style="width:100%" onclick="signup()">Create Free Account →</button>
+    <p id="signupMsg" style="margin-top:10px"></p>
+  </div>
+</section>
+
+<footer style="padding:30px 5%;text-align:center;color:#777">© 2026 HomePulse • Made for stress-free homes • Lagos • London • Houston</footer>
+<div id="toast">Payment successful ✅</div>
+
+<script>
+function scrollToId(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function fmt(n){return '₦'+Number(n).toLocaleString()}
+function calc(){
+  let r=+document.getElementById('rent').value||0;
+  let u=+document.getElementById('util').value||0;
+  let plan=document.getElementById('plan').value;
+  let total=r+u; let fee=total*0.015; let pay=total+fee;
+  if(plan==12){pay=pay*12*0.95; document.getElementById('saveMsg').innerText='You save 5% on yearly plan!'}
+  else if(plan==0.25){pay=pay/4; document.getElementById('saveMsg').innerText='Weekly payment - easier to manage'}
+  else{document.getElementById('saveMsg').innerText=''}
+  document.getElementById('out1').innerText=fmt(total);
+  document.getElementById('out2').innerText=fmt(fee);
+  document.getElementById('out3').innerText=fmt(Math.round(pay));
+}
+function toggleAuto(){
+  let s=document.getElementById('autoSwitch'); s.classList.toggle('on');
+  document.getElementById('autoText').innerText = s.classList.contains('on') ? 'Autopay: ON - Pays on 1st' : 'Autopay: OFF - Manual only';
+}
+function payNow(){
+  document.getElementById('payMsg').innerText='✅ Payment simulated! Receipt sent to your email. Next payment: 1st Dec 2026';
+  let t=document.getElementById('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',3000);
+}
+function signup(){
+  let n=document.getElementById('name').value; let e=document.getElementById('email').value;
+  if(!n||!e){document.getElementById('signupMsg').innerText='Abeg fill name + email'; return;}
+  document.getElementById('signupMsg').innerText='Welcome '+n+'! 🎉 Check '+e+' - your HomePulse dashboard link don go. Check spam if you no see am.';
+  localStorage.setItem('homepulse_user', JSON.stringify({name:n,email:e}));
+}
+calc();
+</script>
+</body>
+</html>
